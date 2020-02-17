@@ -65,6 +65,7 @@ public class DailyController {
 	        .map(String::valueOf)
 	        .sorted()
 	        .collect(Collectors.toList());
+	    collect.add("---end of list---"); //dummy checkin statement
 		return ResponseEntity.ok().body(collect);
 	}
 	
