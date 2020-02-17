@@ -1,0 +1,1 @@
+{"name":"Levis Whit1e","brand":"Levis","color":"Whit1e","description":"best shor1t","placeOfPurchase":"Hyd1","price":1400.0,"purchaseDate":"14/1/2000","type":"Shirt"}
