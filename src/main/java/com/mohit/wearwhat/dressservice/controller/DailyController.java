@@ -142,8 +142,21 @@ public class DailyController {
 
 	@RequestMapping(value = "/mongo", method = RequestMethod.GET)
 	public ResponseEntity<Object> displayMongoDocs() {
-		List<Garment> total = garmentRepository.findAll();
-		return ResponseEntity.ok().body(total);
-		
+		List<Garment> garments = garmentRepository.findAll();
+		return ResponseEntity.ok().body(garments);
+	}
+	
+	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	public ResponseEntity<Object> addGarmentToDB() {
+		Garment garment = new Garment();
+		garment.setBrand("Kelvin Klien");
+		garment.setColor("Yellow");
+		garment.setDescription("Yellow Kelvin client t shirt ON " + System.currentTimeMillis());
+		garment.setName("Yellow stripes");
+		garment.setPlaceOfPurchase("Pittsburgh");
+		garment.setPrice(755.55);
+		garment.setPurchaseDate("31/05/2010");
+		Garment garment1 = garmentRepository.save(garment);
+		return ResponseEntity.ok().body(garment1);
 	}
 }
