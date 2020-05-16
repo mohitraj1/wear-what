@@ -2,11 +2,13 @@ package com.mohit.wearwhat.dressservice.model;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(value = {"pics"})
+@Document(collection = "garments")
 public class Garment {
 	private String name;
 	private String brand;
