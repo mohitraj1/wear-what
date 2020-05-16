@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,10 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohit.wearwhat.dressservice.model.Garment;
+import com.mohit.wearwhat.dressservice.repository.GarmentRepository;
 
 @RestController
 @RequestMapping("/today")
 public class DailyController {
+	
+	@Autowired GarmentRepository garmentRepository;
+	
 	@RequestMapping(value = "/history", method = RequestMethod.GET)
 	public ResponseEntity<Object> showHistory() {
 		Path resourceDirectory = Paths.get("src","main","resources", "data");
@@ -135,4 +140,10 @@ public class DailyController {
 	    return ResponseEntity.ok().body(content);
 	}
 
+	@RequestMapping(value = "/mongo", method = RequestMethod.GET)
+	public ResponseEntity<Object> displayMongoDocs() {
+		List<Garment> total = garmentRepository.findAll();
+		return ResponseEntity.ok().body(total);
+		
+	}
 }
