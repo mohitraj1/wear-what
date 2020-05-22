@@ -6,4 +6,5 @@ import com.mohit.wearwhat.dressservice.model.Garment;
 
 public interface GarmentRepository extends MongoRepository<Garment, String> {
 
+	public Garment findByName(String garment);
 }
