@@ -1,30 +1,21 @@
 package com.mohit.wearwhat.dressservice.controller;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohit.wearwhat.dressservice.model.Garment;
 import com.mohit.wearwhat.dressservice.repository.GarmentRepository;
+import com.mohit.wearwhat.dressservice.service.ImageService;
 
 @RestController
 @RequestMapping("/today")
@@ -32,44 +23,8 @@ public class DailyController {
 	
 	@Autowired GarmentRepository garmentRepository;
 	
-	@RequestMapping(value = "/register", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
-	public ResponseEntity<Object> register(@ModelAttribute Garment garment) throws Exception, IOException {	
-		Path resourceDirectory = Paths.get("src","main","resources", "data");
-		File file = new File(resourceDirectory.toFile().getAbsolutePath() + "/" + garment.getName() + ".json");
-		
-//		garment.getPics().transferTo(resourceDirectory.resolve(garment.getPics().getOriginalFilename()));
-		int index = 1;
-		for (MultipartFile pic : garment.getPics()) {
-			String ext = FilenameUtils.getExtension(garment.getPics().get(index-1).getOriginalFilename());
-			String picName = garment.getName() + "-" + index++ + "." + ext; 
-			pic.transferTo(resourceDirectory.resolve(picName));	
-		}
-		
-		String content = null;
-		try {
-			if (file.createNewFile())
-			{
-			    System.out.println("File is created!");
-			  
-			} else {
-			    System.out.println("File already exists.");
-			}
-			
-			//Write Content
-			ObjectMapper om = new ObjectMapper();
-			content = om.writeValueAsString(garment);
-		    FileWriter writer = new FileWriter(file);
-		    writer.write(content);
-		    writer.close();
-		    
-		    content = new String ( Files.readAllBytes(resourceDirectory.resolve(garment.getName() + ".json")) );
-		} catch(Exception ex) {
-			System.out.println(ex.getMessage());
-			return ResponseEntity.notFound().build();
-		}
-	    return ResponseEntity.ok().body(content);
-	}
-
+	@Autowired ImageService imageService; 
+	
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public ResponseEntity<Object> displayMongoDocs() {
 		List<Garment> garments = garmentRepository.findAll();
@@ -97,8 +52,18 @@ public class DailyController {
 	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE  )
-	public ResponseEntity<Object> addNew(@ModelAttribute Garment garment) throws Exception, IOException {	
+	public ResponseEntity<Object> addNew(@ModelAttribute Garment garment) throws Exception, IOException {
+		List<MultipartFile> pics = garment.getPics();
+		garment.setPics(null);
 		Garment garment1 = garmentRepository.save(garment);
+		for (MultipartFile pic : pics) {
+			long start = System.currentTimeMillis();
+//			garment.getPictures().add( new Binary(BsonBinarySubType.BINARY, pic.getBytes()));
+			System.out.println("Posrig image " + (System.currentTimeMillis() - start));
+			/*CompletableFuture<String> resp = */
+			imageService.persistImage(pic, garment1.getId());
+			System.out.println("After Posrig image " + (System.currentTimeMillis() - start));
+		}
 		return ResponseEntity.ok().body(garment1);
 	}
 }

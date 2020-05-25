@@ -1,7 +1,9 @@
 package com.mohit.wearwhat.dressservice.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"pics"})
 @Document(collection = "garments")
 public class Garment {
+	@Id
+    private String id;
 	private String name;
 	private String brand;
 	private String color;
@@ -19,7 +23,14 @@ public class Garment {
 	private String purchaseDate;
 	private GarmentType type;
 	private List<MultipartFile> pics;
+	private List<String> images = new ArrayList<String>();
 	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -68,12 +79,6 @@ public class Garment {
 	public void setType(GarmentType type) {
 		this.type = type;
 	}
-//	public MultipartFile getPics() {
-//		return pics;
-//	}
-//	public void setPics(MultipartFile pics) {
-//		this.pics = pics;
-//	}
 	public List<MultipartFile> getPics() {
 		return pics;
 	}
@@ -81,5 +86,11 @@ public class Garment {
 		this.pics = pics;
 	}
 	
+	public List<String> getImages() {
+		return images;
+	}
+	public void setImages(List<String> images) {
+		this.images = images;
+	}
 	
 }
